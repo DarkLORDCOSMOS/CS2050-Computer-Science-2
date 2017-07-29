@@ -1,0 +1,122 @@
+from __future__ import print_function
+import unittest, sys
+
+'''
+    Given the location of two queens, find if they are safe
+    from each other.
+'''
+def safe(one, two):
+    if one[0] == two[0]: return False
+    if one[1] == two[1]: return False
+    if abs(two[0]-one[0]) == abs(two[1]-one[1]): return False
+    return True
+
+def print_solution(size, solutions):
+    print("for:", size)
+    if solutions == []:
+        print("no solution found")
+        return
+
+    print('-' * size)
+
+    for placed in solutions:
+        for i in range(size):
+            for j in range(size):
+                if [i, j] in placed:
+                    sys.stdout.write("Q")
+                else:
+                    sys.stdout.write(".")
+            print()
+
+        print('-' * size)
+
+    print(len(solutions), " solutions found ")
+
+def solve_queens(size, row, placed, solutions):
+    # if the row is greater than the size of the board, we're done
+    if row == size:
+        solutions.append(placed)
+        return
+
+    # go through the columns in this row
+    for column in range(size):
+
+        #     go through all the already placed queens and see if
+        #         placing a new queen at (row, column) is safe
+        tmp = True
+        for queen in placed:
+            if tmp and not safe([row, column], queen):
+                tmp = False
+                break
+
+        #     if it is
+        # if tmp:
+        #     foo = solve_queens(size, row + 1, placed + [[row, column]])
+        #     if foo:
+        #         return foo
+        if tmp:
+            solve_queens(size, row + 1, placed + [[row, column]], solutions)
+    return solutions
+
+
+# for queen in placed:
+#     placed.remove(queen)
+#     solution = solve_queens(size, 0, placed, solutions)
+#     if solution:
+#         if solution not in solutions and solution != solutions:
+#             solutions.append(solution)
+#         else:
+#             return solutions
+
+# print("solution found!")
+# if solution not in solutions:
+#     print("new solution found!")
+#     print("solution = ", solution)
+#     print("solutions = ", solutions)
+#     print("appending solution...")
+#     solutions.append(solution)
+#     print("solutions = ", solutions)
+# else:
+#     print("duplicate solution found!")
+#     print("solutions = ", solutions)
+#     solve_queens(size, 0, placed + [[row, column]], solutions)
+#     print("solutions = ", solutions)
+
+
+class test_Queens(unittest.TestCase):
+    def test_safe(self):
+        self.assertTrue(safe([0, 1], [3, 2]))
+    def test_unsafe(self):
+        self.assertFalse(safe([1, 1], [1, 2]))
+    def test_3(self):
+        solutions = solve_queens(3, 0, [], [])
+        self.assertEquals(len(solutions), 0)
+        print_solution(3, solutions)
+    def test_4(self):
+        solutions = solve_queens(4, 0, [], [])
+        self.assertEquals(len(solutions), 2)
+        print_solution(4, solutions)
+    def test_5(self):
+        solutions = solve_queens(5, 0, [], [])
+        self.assertEquals(len(solutions), 10)
+        print_solution(5, solutions)
+    def test_6(self):
+        solutions = solve_queens(6, 0, [], [])
+        self.assertEquals(len(solutions), 4)
+        print_solution(6, solutions)
+    def test_7(self):
+        solutions = solve_queens(7, 0, [], [])
+        self.assertEquals(len(solutions), 40)
+        print_solution(7, solutions)
+    def test_8(self):
+        solutions = solve_queens(8, 0, [], [])
+        self.assertEquals(len(solutions), 92)
+        print_solution(8, solutions)
+    def test_9(self):
+        solutions = solve_queens(9, 0, [], [])
+        self.assertEquals(len(solutions), 352)
+        print_solution(9, solutions)
+
+# For extra credit, have your program solve the problem of any size.
+# For extra-extra credit, have your program find all the solutions of
+# a given size; for example, there are 92 solutions for eight queens.
